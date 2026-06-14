@@ -1,0 +1,5 @@
+# nothing to ignore — fully static, no secrets, no build artifacts
+# (kept so the repo root is explicit)
+*.log
+.DS_Store
+Thumbs.db
