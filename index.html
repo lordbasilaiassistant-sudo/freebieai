@@ -3,23 +3,21 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>FreebieAI — Free Image & Video Generator (No API Key)</title>
-<meta name="description" content="Generate AI images and videos free in your browser. No API key, no signup form. Powered by FLUX, DALL·E 3, GPT-Image, Gemini, Sora 2, Veo 3.1, Wan & Seedance." />
+<title>FreebieAI — Free AI Image Generator (No Key, No Signup, No Paywall)</title>
+<meta name="description" content="Generate AI images free in your browser. No API key, no signup form, no paywall. FLUX, GPT-Image, and Stable Diffusion — all free and verified working." />
 <meta name="theme-color" content="#0a0a0f" />
-<!-- Social share (Open Graph + Twitter). After deploy, set og:url to your Pages URL and optionally add an og:image. -->
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://lordbasilaiassistant-sudo.github.io/freebieai/" />
-<meta property="og:title" content="FreebieAI — Free AI Image & Video Generator (No API Key, No Signup)" />
-<meta property="og:description" content="Generate AI images and videos free in your browser. No API key, no signup form, no backend. FLUX · DALL·E 3 · GPT-Image · Gemini · Sora 2 · Veo 3.1 · Wan · Seedance." />
+<meta property="og:title" content="FreebieAI — Free AI Image Generator" />
+<meta property="og:description" content="Generate AI images free in your browser. No API key, no signup form, no paywall. FLUX · GPT-Image · Stable Diffusion." />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="FreebieAI — Free AI Image & Video Generator" />
-<meta name="twitter:description" content="Free AI image & video generation in your browser. No API key, no signup form." />
+<meta name="twitter:title" content="FreebieAI — Free AI Image Generator" />
+<meta name="twitter:description" content="Free AI image generation in your browser. No key, no signup, no paywall." />
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>" />
 <style>
   :root{
-    --bg:#0a0a0f; --bg2:#12121c; --card:#16161f; --line:#262633;
-    --txt:#e9e9f0; --muted:#9a9ab0; --accent:#7c5cff; --accent2:#16c2c2;
-    --good:#37d67a; --bad:#ff5470; --radius:16px;
+    --bg:#0a0a0f; --bg2:#13131e; --card:#16161f; --line:#262633;
+    --txt:#e9e9f0; --muted:#9a9ab0; --accent:#7c5cff; --accent2:#16c2c2; --good:#37d67a; --radius:16px;
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
@@ -31,91 +29,88 @@
       var(--bg);
     color:var(--txt); min-height:100vh; line-height:1.5;
   }
-  a{color:var(--accent2);text-decoration:none}
-  a:hover{text-decoration:underline}
-  .wrap{max-width:1040px;margin:0 auto;padding:28px 20px 80px}
-  header{display:flex;flex-direction:column;gap:6px;margin-bottom:22px}
-  .logo{font-size:1.7rem;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
+  a{color:var(--accent2);text-decoration:none} a:hover{text-decoration:underline}
+  .wrap{max-width:1080px;margin:0 auto;padding:30px 20px 90px}
+  header{margin-bottom:22px}
+  .logo{font-size:1.8rem;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
   .logo .dot{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .sub{color:var(--muted);font-size:.95rem;max-width:680px}
-  .tabs{display:flex;gap:8px;margin:22px 0 18px}
-  .tab{flex:0 0 auto;padding:10px 18px;border-radius:999px;border:1px solid var(--line);
-    background:var(--card);color:var(--muted);font-weight:600;cursor:pointer;transition:.15s;font-size:.95rem}
-  .tab[aria-selected="true"]{color:#fff;border-color:transparent;
-    background:linear-gradient(135deg,var(--accent),#5a3fff);box-shadow:0 6px 22px -8px var(--accent)}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
-  label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 0 6px;text-transform:uppercase;letter-spacing:.04em}
-  textarea,select,input{width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--txt);
+  .sub{color:var(--muted);font-size:.96rem;max-width:700px;margin-top:6px}
+  .badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .badge{font-size:.74rem;font-weight:600;color:var(--good);background:rgba(55,214,122,.1);
+    border:1px solid rgba(55,214,122,.3);padding:4px 11px;border-radius:999px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+  .lbl{display:flex;justify-content:space-between;align-items:center;margin:0 0 6px}
+  label{font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .link{font-size:.78rem;color:var(--accent2);cursor:pointer;user-select:none}
+  .link:hover{text-decoration:underline}
+  textarea,select{width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--txt);
     border-radius:12px;padding:12px 14px;font-size:1rem;font-family:inherit;outline:none;transition:.15s}
-  textarea:focus,select:focus,input:focus{border-color:var(--accent)}
-  textarea{resize:vertical;min-height:88px}
-  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
-  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:14px}
+  textarea:focus,select:focus{border-color:var(--accent)}
+  textarea{resize:vertical;min-height:92px}
+  .row3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:14px;margin-top:14px}
   .field{min-width:0}
-  .controls{margin-top:16px;display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
-  .togg{display:flex;align-items:center;gap:9px;font-size:.9rem;color:var(--muted);cursor:pointer;user-select:none}
-  .togg input{width:auto;accent-color:var(--accent)}
+  .controls{margin-top:18px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+  .kbd{font-size:.78rem;color:var(--muted)}
+  .kbd b{color:var(--txt);background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:1px 7px;font-weight:600}
   .btn{appearance:none;border:none;cursor:pointer;font-weight:700;font-size:1rem;color:#fff;
-    padding:13px 26px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#5a3fff);
+    padding:13px 28px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#5a3fff);
     box-shadow:0 8px 26px -10px var(--accent);transition:.15s;display:inline-flex;align-items:center;gap:9px}
-  .btn:hover{transform:translateY(-1px)}
-  .btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
-  .hint{font-size:.82rem;color:var(--muted);margin-top:10px}
-  .out{margin-top:22px}
-  .status{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.95rem;padding:14px 0}
-  .spinner{width:18px;height:18px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+  .btn:hover:not(:disabled){transform:translateY(-1px)} .btn:disabled{opacity:.55;cursor:not-allowed}
+  .btn.sm{padding:8px 15px;font-size:.85rem;box-shadow:none}
+  .btn.ghost{background:var(--bg2);border:1px solid var(--line);color:var(--txt);box-shadow:none}
+  .out{margin-top:24px}
+  .results{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+  .slot{background:var(--bg2);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+  .slot .imgbox{position:relative;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;background:repeating-conic-gradient(#1a1a26 0% 25%, #15151f 0% 50%) 50%/22px 22px}
+  .slot img{width:100%;height:100%;object-fit:cover;cursor:zoom-in;display:block}
+  .slot .bar{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;border-top:1px solid var(--line)}
+  .slot .bar .m{font-size:.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .spinner{width:26px;height:26px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
-  .err{background:rgba(255,84,112,.1);border:1px solid rgba(255,84,112,.35);color:#ffb3c1;
-    padding:12px 14px;border-radius:12px;font-size:.9rem}
-  .media{width:100%;border-radius:12px;border:1px solid var(--line);display:block;background:var(--bg2)}
-  .resultcard{position:relative;margin-top:8px}
-  .resmeta{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap}
-  .resmeta .lbl{font-size:.82rem;color:var(--muted)}
-  .gallery{margin-top:34px}
-  .gallery h3{font-size:.95rem;color:var(--muted);font-weight:700;margin:0 0 12px;text-transform:uppercase;letter-spacing:.04em}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-  .grid figure{margin:0;background:var(--bg2);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-  .grid img,.grid video{width:100%;height:130px;object-fit:cover;display:block}
-  .grid figcaption{font-size:.72rem;color:var(--muted);padding:7px 9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .pill{font-size:.7rem;background:var(--bg2);border:1px solid var(--line);color:var(--muted);padding:3px 9px;border-radius:999px}
-  footer{margin-top:50px;color:var(--muted);font-size:.82rem;text-align:center;border-top:1px solid var(--line);padding-top:22px}
-  .note{background:rgba(124,92,255,.08);border:1px solid rgba(124,92,255,.3);border-radius:12px;padding:12px 14px;font-size:.85rem;color:#cfc6ff;margin-top:16px}
+  .slotmsg{font-size:.8rem;color:var(--muted);padding:14px;text-align:center}
+  .slotmsg.err{color:#ffb3c1}
+  .dl{font-size:.78rem;color:var(--accent2);cursor:pointer;text-decoration:none;white-space:nowrap}
+  .dl:hover{text-decoration:underline}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:12px;flex-wrap:wrap}
+  .topbar h3{font-size:.95rem;color:var(--muted);font-weight:700;margin:0;text-transform:uppercase;letter-spacing:.04em}
+  .note{background:rgba(124,92,255,.08);border:1px solid rgba(124,92,255,.3);border-radius:12px;padding:12px 14px;font-size:.85rem;color:#cfc6ff;margin-top:18px}
+  footer{margin-top:46px;color:var(--muted);font-size:.82rem;text-align:center;border-top:1px solid var(--line);padding-top:22px}
   optgroup{color:var(--muted)} option{color:var(--txt);background:var(--bg2)}
-  @media(max-width:600px){.row,.row3{grid-template-columns:1fr}}
+  /* lightbox */
+  #lb{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;z-index:50;cursor:zoom-out;padding:20px}
+  #lb img{max-width:96vw;max-height:92vh;border-radius:10px;box-shadow:0 20px 80px rgba(0,0,0,.6)}
+  #lb .x{position:absolute;top:18px;right:24px;font-size:2rem;color:#fff;opacity:.8}
+  @media(max-width:600px){.row3{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <div class="logo">🎨 Freebie<span class="dot">AI</span></div>
-    <div class="sub">Free AI <b>image</b> &amp; <b>video</b> generation, right in your browser. <b>No API key</b>, <b>no signup form</b>, no backend to run. Powered by a multi-provider stack — FLUX, DALL·E 3, GPT-Image, Gemini &amp; Grok for images; Sora 2, Veo 3.1, Wan &amp; Seedance for video.</div>
+    <div class="sub">Generate AI images for free, right in your browser. Every model below is one I tested and confirmed runs <b>anonymously with zero credits</b> — no key to paste, no account to make, no paywall.</div>
+    <div class="badges">
+      <span class="badge">✓ No API key</span>
+      <span class="badge">✓ No signup form</span>
+      <span class="badge">✓ No paywall</span>
+      <span class="badge">✓ 6 models</span>
+      <span class="badge">✓ Runs in your browser</span>
+    </div>
   </header>
 
-  <div class="tabs" role="tablist">
-    <button class="tab" role="tab" aria-selected="true" data-mode="image">🖼️ Image</button>
-    <button class="tab" role="tab" aria-selected="false" data-mode="video">🎬 Video</button>
-  </div>
-
-  <!-- IMAGE PANEL -->
-  <section class="card" id="panel-image">
-    <label for="imgPrompt">Prompt</label>
-    <textarea id="imgPrompt" placeholder="A neon koi fish swimming through a cyberpunk city at night, cinematic, ultra detailed"></textarea>
+  <section class="card">
+    <div class="lbl"><label for="prompt">Prompt</label><span class="link" id="surprise">🎲 Surprise me</span></div>
+    <textarea id="prompt" placeholder="A neon koi fish swimming through a rain-soaked cyberpunk alley at night, reflections, cinematic, ultra detailed"></textarea>
     <div class="row3">
       <div class="field">
-        <label for="imgModel">Model / Provider</label>
-        <select id="imgModel">
-          <optgroup label="Black Forest Labs (FLUX)">
-            <option value="black-forest-labs/flux-schnell">FLUX schnell (fast)</option>
-            <option value="black-forest-labs/flux-1.1-pro">FLUX 1.1 pro</option>
+        <label for="model">Model (all free)</label>
+        <select id="model">
+          <optgroup label="FLUX — Black Forest Labs">
+            <option value="black-forest-labs/flux-schnell">FLUX schnell — fast</option>
+            <option value="black-forest-labs/flux-1.1-pro">FLUX 1.1 pro — best quality</option>
           </optgroup>
-          <optgroup label="OpenAI">
-            <option value="dall-e-3">DALL·E 3</option>
+          <optgroup label="OpenAI GPT-Image">
             <option value="gpt-image-1">GPT-Image 1</option>
             <option value="gpt-image-2">GPT-Image 2</option>
-          </optgroup>
-          <optgroup label="Google / xAI">
-            <option value="gemini">Gemini (image)</option>
-            <option value="grok-2-image">Grok 2 Image</option>
           </optgroup>
           <optgroup label="Stability">
             <option value="stabilityai/stable-diffusion-3-medium">Stable Diffusion 3</option>
@@ -124,199 +119,155 @@
         </select>
       </div>
       <div class="field">
-        <label for="imgSize">Size</label>
-        <select id="imgSize">
-          <option value="1024x1024">Square 1024²</option>
-          <option value="768x1024">Portrait 768×1024</option>
-          <option value="1024x768">Landscape 1024×768</option>
-          <option value="512x512">Small 512²</option>
+        <label for="size">Aspect</label>
+        <select id="size">
+          <option value="1024x1024">Square · 1024²</option>
+          <option value="1024x1536">Portrait · 2:3</option>
+          <option value="1536x1024">Landscape · 3:2</option>
+          <option value="512x512">Fast · 512²</option>
         </select>
       </div>
       <div class="field">
-        <label for="imgQuality">Quality (GPT-Image)</label>
-        <select id="imgQuality">
-          <option value="">default</option>
-          <option value="high">high</option>
-          <option value="medium">medium</option>
-          <option value="low">low</option>
+        <label for="count">How many</label>
+        <select id="count">
+          <option value="1">1 image</option>
+          <option value="2">2 images</option>
+          <option value="4">4 images</option>
         </select>
       </div>
     </div>
     <div class="controls">
-      <label class="togg"><input type="checkbox" id="imgTest" /> Test mode (free sample, no credits)</label>
-      <button class="btn" id="imgGo">✨ Generate Image</button>
+      <span class="kbd"><b>Ctrl</b> + <b>Enter</b> to generate</span>
+      <button class="btn" id="go">✨ Generate</button>
     </div>
-    <div class="out" id="imgOut"></div>
-  </section>
-
-  <!-- VIDEO PANEL -->
-  <section class="card" id="panel-video" style="display:none">
-    <label for="vidPrompt">Prompt</label>
-    <textarea id="vidPrompt" placeholder="A drone shot flying over a misty mountain valley at sunrise, golden light, cinematic 4k"></textarea>
-    <div class="row">
-      <div class="field">
-        <label for="vidModel">Model / Provider</label>
-        <select id="vidModel">
-          <optgroup label="Google Veo">
-            <option value="veo-3.1-fast-generate-preview">Veo 3.1 fast</option>
-            <option value="veo-3.1-generate-preview">Veo 3.1</option>
-            <option value="veo-3.0-fast-generate-001">Veo 3.0 fast</option>
-            <option value="veo-2.0-generate-001">Veo 2.0</option>
-          </optgroup>
-          <optgroup label="OpenAI">
-            <option value="sora-2">Sora 2</option>
-            <option value="sora-2-pro">Sora 2 pro</option>
-          </optgroup>
-          <optgroup label="Open models">
-            <option value="wan-ai/wan2.2-t2v-a14b">Wan 2.2 (14B)</option>
-            <option value="bytedance/seedance-1.0-lite">Seedance 1.0 lite</option>
-            <option value="bytedance/seedance-1.0-pro">Seedance 1.0 pro</option>
-            <option value="vidu-q1">Vidu Q1</option>
-          </optgroup>
-        </select>
-      </div>
-      <div class="field">
-        <label for="vidSecs">Length (seconds)</label>
-        <select id="vidSecs">
-          <option value="">default</option>
-          <option value="4">4s</option>
-          <option value="6">6s</option>
-          <option value="8">8s</option>
-        </select>
-      </div>
-    </div>
-    <div class="controls">
-      <label class="togg"><input type="checkbox" id="vidTest" checked /> Test mode (free sample, no credits)</label>
-      <button class="btn" id="vidGo">🎬 Generate Video</button>
-    </div>
-    <p class="hint">Video generation is heavier than images and may take 30–90s. Leave <b>test mode</b> on to preview the flow for free; turn it off for a real render (uses your Puter credits).</p>
-    <div class="out" id="vidOut"></div>
+    <div class="out" id="out"></div>
   </section>
 
   <div class="note">
-    <b>How it's free — no key, no signup:</b> images &amp; videos are generated through <a href="https://puter.com" target="_blank" rel="noopener">Puter.js</a>, which uses a <b>“User-Pays”</b> model. There's <b>no API key</b> to paste and <b>no signup form</b> — on first use you click <i>Continue</i> once and an anonymous account is created automatically (no email, no password). Light usage is free. Everything runs client-side — prompts go straight from your browser to the model provider.
+    <b>How it stays free, no key, no signup:</b> images are generated through <a href="https://puter.com" target="_blank" rel="noopener">Puter.js</a>, a “User-Pays” SDK — the site needs no API keys. On first use you tap <i>Continue</i> once on Puter's dialog and an anonymous account is created automatically (no email, no password, no form). Only models verified to run free anonymously are listed; paywalled ones were removed.
   </div>
 
-  <div class="gallery" id="galleryWrap" style="display:none">
-    <h3>This session</h3>
-    <div class="grid" id="gallery"></div>
+  <div id="galleryWrap" style="display:none;margin-top:34px">
+    <div class="topbar">
+      <h3>This session · <span id="galCount">0</span></h3>
+      <button class="btn ghost sm" id="dlAll">⬇ Download all</button>
+    </div>
+    <div class="results" id="gallery"></div>
   </div>
 
   <footer>
-    FreebieAI · open static tool · deploy your own on GitHub Pages — just one <code>index.html</code>.<br/>
-    Providers via Puter.js: FLUX · DALL·E 3 · GPT-Image · Gemini · Grok · SD3 · SDXL · Sora 2 · Veo 3.1 · Wan · Seedance · Vidu.
+    FreebieAI · open static tool · one <code>index.html</code>, deploy free on GitHub Pages.<br/>
+    Free models (verified): FLUX schnell · FLUX 1.1 pro · GPT-Image 1/2 · Stable Diffusion 3 · SDXL.
   </footer>
 </div>
+
+<div id="lb"><span class="x">×</span><img alt="" /></div>
 
 <script src="https://js.puter.com/v2/"></script>
 <script>
 (() => {
   const $ = id => document.getElementById(id);
-  const tabs = document.querySelectorAll('.tab');
-  const gallery = $('gallery'), galleryWrap = $('galleryWrap');
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const galleryWrap = $('galleryWrap'), gallery = $('gallery'), galCount = $('galCount');
+  let made = 0;
+  const allUrls = [];
 
-  // ---- tab switching ----
-  tabs.forEach(t => t.addEventListener('click', () => {
-    tabs.forEach(x => x.setAttribute('aria-selected', x === t));
-    const m = t.dataset.mode;
-    $('panel-image').style.display = m === 'image' ? '' : 'none';
-    $('panel-video').style.display = m === 'video' ? '' : 'none';
-  }));
+  // ----- lightbox -----
+  const lb = $('lb'), lbImg = lb.querySelector('img');
+  lb.addEventListener('click', () => { lb.style.display = 'none'; lbImg.src = ''; });
+  const openLB = src => { lbImg.src = src; lb.style.display = 'flex'; };
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { lb.style.display='none'; lbImg.src=''; } });
 
-  const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  // ----- surprise prompts -----
+  const PROMPTS = [
+    "A lone astronaut sitting on the rings of Saturn, watching a distant supernova, hyperrealistic",
+    "A cozy bookshop inside a giant hollow tree, warm lanterns, rain outside, studio ghibli style",
+    "Macro photo of a dewdrop on a spiderweb at sunrise, bokeh, national geographic",
+    "A retro 1980s synthwave city skyline, neon grid, purple and teal, chrome lettering",
+    "An ancient dragon curled around a snowy mountain peak, aurora borealis, epic fantasy",
+    "A bowl of ramen styled like a tiny ocean with sushi boats, whimsical, food photography",
+    "Portrait of a wise old fox wearing tiny spectacles and a tweed jacket, oil painting",
+    "A glass terrarium containing a miniature thunderstorm, glowing clouds, product shot",
+    "Underwater city of bioluminescent jellyfish architecture, deep blue, cinematic",
+    "A vintage hot air balloon shaped like a whale floating over Tuscany at golden hour"
+  ];
+  let pIdx = (made + 3) % PROMPTS.length;
+  $('surprise').addEventListener('click', () => { $('prompt').value = PROMPTS[pIdx % PROMPTS.length]; pIdx++; });
 
-  function setStatus(out, text){
-    out.innerHTML = `<div class="status"><span class="spinner"></span><span>${esc(text)}</span></div>`;
-  }
-  function setError(out, msg){
-    out.innerHTML = `<div class="err"><b>Generation failed.</b><br/>${esc(msg)}<br/><span style="opacity:.8">Try a different model, or toggle test mode.</span></div>`;
-  }
-
-  function addToGallery(node, caption){
-    galleryWrap.style.display = '';
-    const fig = document.createElement('figure');
-    const thumb = node.cloneNode(true);
-    thumb.removeAttribute('controls');
-    fig.appendChild(thumb);
-    const cap = document.createElement('figcaption');
-    cap.textContent = caption;
-    fig.appendChild(cap);
-    gallery.prepend(fig);
-  }
-
-  function downloadBtn(url, filename){
+  function dlLink(url, name, text){
     const a = document.createElement('a');
-    a.href = url; a.download = filename;
-    a.className = 'btn'; a.style.padding = '9px 16px'; a.style.fontSize = '.9rem';
-    a.textContent = '⬇ Download';
+    a.href = url; a.download = name; a.className = 'dl'; a.textContent = text || '⬇ Download';
     return a;
   }
 
-  // ---- IMAGE ----
-  $('imgGo').addEventListener('click', async () => {
-    const prompt = $('imgPrompt').value.trim();
-    const out = $('imgOut');
-    if (!prompt) { setError(out, 'Please enter a prompt.'); return; }
-    const model = $('imgModel').value;
-    const [w, h] = $('imgSize').value.split('x').map(Number);
-    const quality = $('imgQuality').value;
-    const testMode = $('imgTest').checked;
-    const btn = $('imgGo'); btn.disabled = true;
-    setStatus(out, `Generating with ${model}…`);
+  function addToGallery(src, model){
+    galleryWrap.style.display = '';
+    allUrls.push({src, name:`freebieai-${Date.now()}-${allUrls.length}.png`});
+    galCount.textContent = ++made;
+    const slot = document.createElement('div'); slot.className = 'slot';
+    const box = document.createElement('div'); box.className = 'imgbox';
+    const im = document.createElement('img'); im.src = src; im.loading = 'lazy';
+    im.addEventListener('click', () => openLB(src));
+    box.appendChild(im);
+    const bar = document.createElement('div'); bar.className = 'bar';
+    const m = document.createElement('span'); m.className = 'm'; m.textContent = model;
+    bar.appendChild(m);
+    bar.appendChild(dlLink(src, `freebieai-${made}.png`, '⬇'));
+    slot.appendChild(box); slot.appendChild(bar);
+    gallery.prepend(slot);
+  }
 
-    try {
-      if (typeof puter === 'undefined') throw new Error('Puter.js failed to load. Check your connection.');
-      const opts = { prompt, model, width: w, height: h };
-      if (quality) opts.quality = quality;
-      if (testMode) opts.test_mode = true;
-      const imgEl = await puter.ai.txt2img(opts);
-      imgEl.className = 'media';
-      const url = imgEl.src;
-      const wrap = document.createElement('div'); wrap.className = 'resultcard';
-      wrap.appendChild(imgEl);
-      const meta = document.createElement('div'); meta.className = 'resmeta';
-      meta.innerHTML = `<span class="lbl"><span class="pill">${esc(model)}</span> ${w}×${h}${testMode?' · test':''}</span>`;
-      meta.appendChild(downloadBtn(url, `freebieai-${Date.now()}.png`));
-      wrap.appendChild(meta);
-      out.innerHTML = ''; out.appendChild(wrap);
-      addToGallery(imgEl, model);
-    } catch (e) {
-      setError(out, (e && e.message) || String(e));
-    } finally { btn.disabled = false; }
+  $('dlAll').addEventListener('click', () => {
+    allUrls.forEach((u, i) => setTimeout(() => {
+      const a = document.createElement('a'); a.href = u.src; a.download = u.name;
+      document.body.appendChild(a); a.click(); a.remove();
+    }, i * 350));
   });
 
-  // ---- VIDEO ----
-  $('vidGo').addEventListener('click', async () => {
-    const prompt = $('vidPrompt').value.trim();
-    const out = $('vidOut');
-    if (!prompt) { setError(out, 'Please enter a prompt.'); return; }
-    const model = $('vidModel').value;
-    const secs = $('vidSecs').value;
-    const testMode = $('vidTest').checked;
-    const btn = $('vidGo'); btn.disabled = true;
-    setStatus(out, `Rendering video with ${model}… this can take 30–90s.`);
+  async function generate(){
+    const prompt = $('prompt').value.trim();
+    const out = $('out');
+    if (!prompt){ out.innerHTML = '<div class="slotmsg err">Please enter a prompt first.</div>'; return; }
+    if (typeof puter === 'undefined'){ out.innerHTML = '<div class="slotmsg err">Puter.js failed to load — check your connection or ad-blocker.</div>'; return; }
+    const model = $('model').value;
+    const [w, h] = $('size').value.split('x').map(Number);
+    const count = Number($('count').value);
+    const go = $('go'); go.disabled = true;
 
-    try {
-      if (typeof puter === 'undefined') throw new Error('Puter.js failed to load. Check your connection.');
-      const opts = { prompt, model };
-      if (secs) opts.seconds = Number(secs);
-      if (testMode) opts.test_mode = true;
-      const vidEl = await puter.ai.txt2vid(opts);
-      vidEl.className = 'media';
-      vidEl.controls = true;
-      const url = vidEl.src || (vidEl.querySelector && vidEl.querySelector('source') && vidEl.querySelector('source').src);
-      const wrap = document.createElement('div'); wrap.className = 'resultcard';
-      wrap.appendChild(vidEl);
-      const meta = document.createElement('div'); meta.className = 'resmeta';
-      meta.innerHTML = `<span class="lbl"><span class="pill">${esc(model)}</span>${testMode?' · test sample':''}</span>`;
-      if (url) meta.appendChild(downloadBtn(url, `freebieai-${Date.now()}.mp4`));
-      wrap.appendChild(meta);
-      out.innerHTML = ''; out.appendChild(wrap);
-      addToGallery(vidEl, model);
-    } catch (e) {
-      setError(out, (e && e.message) || String(e));
-    } finally { btn.disabled = false; }
-  });
+    // build placeholder slots
+    out.innerHTML = '<div class="results" id="liveResults"></div>';
+    const live = $('liveResults');
+    const slots = [];
+    for (let i=0;i<count;i++){
+      const slot = document.createElement('div'); slot.className='slot';
+      slot.innerHTML = `<div class="imgbox"><div class="spinner"></div></div><div class="bar"><span class="m">${esc(model)}</span></div>`;
+      live.appendChild(slot); slots.push(slot);
+    }
+    // generate sequentially (one anon queue), fill slots as they arrive
+    for (let i=0;i<count;i++){
+      const t0 = Date.now();
+      try {
+        const img = await puter.ai.txt2img({ prompt, model, width:w, height:h });
+        const secs = ((Date.now()-t0)/1000).toFixed(1);
+        const slot = slots[i];
+        slot.querySelector('.imgbox').innerHTML = '';
+        const im = document.createElement('img'); im.src = img.src; im.alt = prompt;
+        im.addEventListener('click', () => openLB(img.src));
+        slot.querySelector('.imgbox').appendChild(im);
+        const bar = slot.querySelector('.bar');
+        bar.innerHTML = `<span class="m">${esc(model)} · ${w}×${h} · ${secs}s</span>`;
+        bar.appendChild(dlLink(img.src, `freebieai-${Date.now()}-${i}.png`, '⬇ Save'));
+        addToGallery(img.src, model);
+      } catch(e){
+        const slot = slots[i];
+        slot.querySelector('.imgbox').innerHTML = `<div class="slotmsg err">${esc((e&&e.message)||e)}</div>`;
+      }
+    }
+    go.disabled = false;
+  }
+
+  $('go').addEventListener('click', generate);
+  $('prompt').addEventListener('keydown', e => { if ((e.ctrlKey||e.metaKey) && e.key === 'Enter') generate(); });
 })();
 </script>
 </body>

@@ -1,84 +1,85 @@
-# 🎨 FreebieAI — Free Image & Video Generator (No API Key, No Signup)
+# 🎨 FreebieAI — Free AI Image Generator (No Key, No Signup, No Paywall)
 
 A single static `index.html` you can drop on **GitHub Pages** (or any static host) that lets
-**anyone** generate AI **images and videos** in their browser — with **no API key to paste** and
-**no signup form**.
+**anyone** generate AI images in their browser — **no API key to paste, no signup form, no paywall.**
 
-Live test result (FLUX schnell, generated through the UI, anonymous): a real 1024×1024 image in ~6s.
+**Live:** https://lordbasilaiassistant-sudo.github.io/freebieai/
+
+Every model in the UI was tested and confirmed to run **anonymously, with zero credits.**
 
 ---
 
-## How it works
+## What it does
 
-All generation goes through [**Puter.js**](https://developer.puter.com), a client-side SDK that uses a
+- Prompt → image, with **6 free models**, **aspect-ratio presets**, and **1 / 2 / 4** images per run
+- 🎲 **Surprise me** example prompts, **Ctrl/Cmd+Enter** to generate
+- Click any result to open a **lightbox**; **Save** per image or **Download all**
+- A **session gallery** of everything you've made
+- 100% client-side — your prompt goes straight from your browser to the model provider
+
+| Model | Provider | Notes |
+|-------|----------|-------|
+| `black-forest-labs/flux-schnell` | FLUX | fast |
+| `black-forest-labs/flux-1.1-pro` | FLUX | best quality |
+| `gpt-image-1`, `gpt-image-2` | OpenAI GPT-Image | returns data-URL PNGs |
+| `stabilityai/stable-diffusion-3-medium` | Stability | |
+| `stabilityai/stable-diffusion-xl-base-1.0` | Stability (SDXL) | |
+
+---
+
+## How it's free, with no key and no signup
+
+Generation runs through [**Puter.js**](https://developer.puter.com), a client-side SDK with a
 **"User-Pays"** model:
 
-- The page builder (you) needs **no API key and no backend** — just include one `<script>` tag.
-- The end user clicks **"Continue"** once on Puter's consent dialog; an **anonymous account is created
-  automatically** (no email, no password, no form). Light usage is free.
-- Requests go **straight from the browser to the model provider** — no server of ours in the middle.
+- The site needs **no API key and no backend** — just one `<script>` tag.
+- On first use the visitor taps **"Continue"** once on Puter's consent dialog; an **anonymous
+  account is created automatically** (no email, no password, no form). Light usage is free.
 
-This gives a genuinely multi-provider stack behind one keyless library:
+---
 
-| Type  | Models available in the UI |
-|-------|----------------------------|
-| Image | FLUX schnell / 1.1 pro · DALL·E 3 · GPT-Image 1/2 · Gemini · Grok 2 Image · Stable Diffusion 3 · SDXL |
-| Video | Veo 3.1 (fast) · Veo 3.0 / 2.0 · Sora 2 / 2 pro · Wan 2.2 (14B) · Seedance 1.0 lite/pro · Vidu Q1 |
+## Why image-only (the honest part)
 
-**Test mode** toggle returns a free sample (no credits used) so you can demo the flow — on by default
-for video, since video is the heavier operation.
+I tested the video side too. **Free, keyless, no-signup *generative* video does not exist in a
+browser as of June 2026:**
+
+- Every Puter video model (Veo, Sora, Wan, Seedance, Vidu) returns **`Insufficient funds`** — paywalled.
+- **Pollinations** went paywalled (HTTP `402` x402 crypto-gate), confirmed via curl *and* in-browser.
+- **Hugging Face** ZeroGPU spaces return `event: error` without an auth token.
+- **Craiyon** is `403` Cloudflare-blocked.
+
+Rather than ship a paywalled tease or a fake "video" effect, the tool does one thing well: **free
+image generation that actually works.** Video can be added if a genuinely free provider appears.
 
 ---
 
 ## Deploy to GitHub Pages (2 minutes)
 
-1. Create a repo (e.g. `freebieai`) on the GitHub account you actually control.
-2. Add `index.html` to the repo root and push.
-3. Repo → **Settings → Pages → Build from branch → `main` / root** → Save.
-4. Your tool is live at `https://<user>.github.io/freebieai/`.
+1. Put `index.html` (+ `.nojekyll`) in a repo root and push.
+2. Repo → **Settings → Pages → Deploy from branch → `main` / root** → Save.
+3. Live at `https://<user>.github.io/<repo>/`.
 
-No build step, no env vars, no secrets. It's one file.
+No build step, no env vars, no secrets — it's one file.
 
 ---
 
-## Provider research notes (evidence, June 2026)
-
-Tested keyless image/video sources before building so this ships on something that actually works:
-
-- **Pollinations** (`image.pollinations.ai`) — **now gated.** Returns HTTP `402` with the `x402`
-  crypto-micropayment protocol for fresh prompts; confirmed blocked both via `curl` and in-browser
-  (real `Origin`/`Referer`). The "free, no key" marketing pages are stale. **Not used.**
-- **Hugging Face ZeroGPU Spaces** (e.g. FLUX.1-schnell) — Gradio 5 API reachable at
-  `/gradio_api/call/infer`, but inference returns `event: error` without an auth token now
-  (ZeroGPU quota requires login). **Not reliable keyless.**
-- **Craiyon v3** — `403` (Cloudflare-blocked to scripted callers).
-- **Puter.js** — ✅ works keyless and signup-form-free; real generations verified for both
-  `puter.ai.txt2img()` and `puter.ai.txt2vid()`. **This is what FreebieAI uses.**
-
-### Verified API call shapes
+## Verified API call shape (for reference)
 
 ```js
-// Image — returns an <img> whose src is a hosted URL (or data URL)
+// Returns an <img>. GPT-Image returns a data: URL; FLUX/SD return hosted URLs.
 await puter.ai.txt2img({ prompt, model: 'black-forest-labs/flux-schnell', width: 1024, height: 1024 });
-await puter.ai.txt2img({ prompt, model: 'dall-e-3', test_mode: true }); // free sample
-
-// Video — returns a <video> element with controls
-await puter.ai.txt2vid({ prompt, model: 'veo-3.1-fast-generate-preview', test_mode: true });
-await puter.ai.txt2vid({ prompt, model: 'sora-2', seconds: 6 });
 ```
 
-> Note: the bare `txt2img(prompt, true)` form shown in some Puter docs is outdated — the current API
-> errors with `Missing model`. Always pass the options object with an explicit `model`.
-
----
+> The bare `txt2img(prompt, true)` form in some Puter docs is outdated (errors `Missing model`).
+> Always pass the options object with an explicit, valid `model`. Note: `dall-e-3`, `gemini`, and
+> `grok-2-image` are **not** valid txt2img model strings — they 404.
 
 ## Local dev
 
 ```bash
-python -m http.server 8745
-# open http://localhost:8745/index.html
+python -m http.server 8747   # → http://localhost:8747/index.html
 ```
 
 ## License
 
-Public / do-whatever. Built as a free tool for everyone.
+Public / do-whatever. A free tool for everyone.
