@@ -6,6 +6,12 @@ A single static `index.html` you can drop on **GitHub Pages** (or any static hos
 **Live:** https://lordbasilaiassistant-sudo.github.io/freebieai/
 
 Every model in the UI was tested and confirmed to run **anonymously, with zero credits.**
+*(Re-verified working 2026-08-07 — FLUX schnell generated anonymously, no dialog, ~9s.)*
+
+> **More free, no-signup tools from the same tiny lab:** [broke2builtai.com/tools](https://broke2builtai.com/tools/) —
+> plus [CoverForge](https://lordbasilaiassistant-sudo.github.io/coverforge/) (covers),
+> [ThumbForge](https://lordbasilaiassistant-sudo.github.io/thumbforge/) (YouTube thumbnails),
+> [Aeon](https://lordbasilaiassistant-sudo.github.io/aeon/) (a browser god-game where every creature is a real neural net).
 
 ---
 
