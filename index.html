@@ -104,17 +104,21 @@
       <div class="field">
         <label for="model">Model (all free)</label>
         <select id="model">
+          <!-- Every option here generated a real image on 2026-09-08, timed. Two models
+               were removed that day because they did not: flux-schnell returned "Failed to
+               extract image URL from Replicate response" three times out of three, each
+               after ~62 seconds of spinner, and stable-diffusion-3-medium returned a hard
+               404 "Unable to access model". Leaving a model in this list that cannot
+               produce an image is the one thing this page must never do. -->
           <optgroup label="FLUX — Black Forest Labs">
-            <option value="black-forest-labs/flux-schnell">FLUX schnell — fast</option>
-            <option value="black-forest-labs/flux-1.1-pro">FLUX 1.1 pro — best quality</option>
-          </optgroup>
-          <optgroup label="OpenAI GPT-Image">
-            <option value="gpt-image-1">GPT-Image 1</option>
-            <option value="gpt-image-2">GPT-Image 2</option>
+            <option value="black-forest-labs/flux-1.1-pro">FLUX 1.1 pro — best quality, ~4s</option>
           </optgroup>
           <optgroup label="Stability">
-            <option value="stabilityai/stable-diffusion-3-medium">Stable Diffusion 3</option>
-            <option value="stabilityai/stable-diffusion-xl-base-1.0">SDXL</option>
+            <option value="stabilityai/stable-diffusion-xl-base-1.0">SDXL — fastest, ~2s</option>
+          </optgroup>
+          <optgroup label="OpenAI GPT-Image">
+            <option value="gpt-image-1">GPT-Image 1 — ~26s</option>
+            <option value="gpt-image-2">GPT-Image 2 — ~34s</option>
           </optgroup>
         </select>
       </div>
@@ -145,6 +149,8 @@
 
   <div class="note">
     <b>How it stays free, no key, no signup:</b> images are generated through <a href="https://puter.com" target="_blank" rel="noopener">Puter.js</a>, a “User-Pays” SDK — the site needs no API keys. On first use you tap <i>Continue</i> once on Puter's dialog and an anonymous account is created automatically (no email, no password, no form). Only models verified to run free anonymously are listed; paywalled ones were removed.
+    <br><br>
+    <b>You never need to sign up.</b> If Puter's dialog offers you email or Microsoft signup, that is <i>not</i> the path this site uses — take <i>Continue</i>. A failing signup form is a Puter account problem and it does not stop you generating here; reload and use the anonymous option. Every model in the list generated a real image on <b>2026-09-08</b> (timings shown next to each). Two models were removed the same day for failing — if one you want is missing, <a href="https://github.com/lordbasilaiassistant-sudo/freebieai/issues" target="_blank" rel="noopener">say so in an issue</a>.
   </div>
 
   <div id="galleryWrap" style="display:none;margin-top:34px">
@@ -231,6 +237,20 @@
     }, i * 350));
   });
 
+  // Upstream errors arrive as provider jargon. A person reading "Failed to extract image
+  // URL from Replicate response" has no idea whether they did something wrong, whether
+  // they need an account, or whether to wait — and the one who filed issue #1 went looking
+  // for a signup form that this site never needed. Say what happened and what to do.
+  function explain(e){
+    const raw = String((e && e.message) || e || '');
+    if (raw === '__TIMEOUT__') return 'That model did not answer within 90 seconds. It is the provider being slow or stuck, not you — pick another model and try again.';
+    if (/concurrent/i.test(raw)) return 'Puter is limiting how many images can be made at once. Wait a few seconds and try again — you do not need an account.';
+    if (/extract image URL/i.test(raw)) return 'The provider returned a response with no image in it. That model is having a bad day — pick another one; nothing is wrong with your setup.';
+    if (/Unable to access model|\b404\b/i.test(raw)) return 'That model is not reachable right now. Pick another one — if it stays broken, open an issue and it gets removed from the list.';
+    if (/auth|sign|token|401|403/i.test(raw)) return 'Puter could not start an anonymous session. You never need to create an account here — reload the page, and if a Puter dialog appears, take the "Continue" option rather than signing up.';
+    return raw || 'Generation failed for an unknown reason. Try another model.';
+  }
+
   async function generate(){
     const prompt = $('prompt').value.trim();
     const out = $('out');
@@ -254,7 +274,13 @@
     for (let i=0;i<count;i++){
       const t0 = Date.now();
       try {
-        const img = await puter.ai.txt2img({ prompt, model, width:w, height:h });
+        // A call that neither resolves nor rejects used to leave the spinner turning
+        // forever, which reads as "the site is broken" rather than "this model is."
+        // 90s is generous: the slowest model measured here finishes in ~34s.
+        const img = await Promise.race([
+          puter.ai.txt2img({ prompt, model, width:w, height:h }),
+          new Promise((_, rej) => setTimeout(() => rej(new Error('__TIMEOUT__')), 90000))
+        ]);
         const secs = ((Date.now()-t0)/1000).toFixed(1);
         const slot = slots[i];
         slot.querySelector('.imgbox').innerHTML = '';
@@ -267,7 +293,7 @@
         addToGallery(img.src, model);
       } catch(e){
         const slot = slots[i];
-        slot.querySelector('.imgbox').innerHTML = `<div class="slotmsg err">${esc((e&&e.message)||e)}</div>`;
+        slot.querySelector('.imgbox').innerHTML = `<div class="slotmsg err">${esc(explain(e))}</div>`;
       }
     }
     go.disabled = false;

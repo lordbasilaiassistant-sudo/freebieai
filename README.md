@@ -6,7 +6,10 @@ A single static `index.html` you can drop on **GitHub Pages** (or any static hos
 **Live:** https://lordbasilaiassistant-sudo.github.io/freebieai/
 
 Every model in the UI was tested and confirmed to run **anonymously, with zero credits.**
-*(Re-verified working 2026-08-07 — FLUX schnell generated anonymously, no dialog, ~9s.)*
+*(Re-tested 2026-09-08 in a real browser: 4 of the 6 models listed that day produced an image;
+the 2 that did not were removed. Timings and the exact failures are in the model table below.
+Caveat worth stating plainly: that run used an existing signed-in Puter session, so it proves the
+models work — the anonymous-session path was last confirmed 2026-08-07.)*
 
 > **More free, no-signup tools from the same tiny lab:** [broke2builtai.com/tools](https://broke2builtai.com/tools/) —
 > plus [CoverForge](https://lordbasilaiassistant-sudo.github.io/coverforge/) (covers),
@@ -23,13 +26,21 @@ Every model in the UI was tested and confirmed to run **anonymously, with zero c
 - A **session gallery** of everything you've made
 - 100% client-side — your prompt goes straight from your browser to the model provider
 
-| Model | Provider | Notes |
-|-------|----------|-------|
-| `black-forest-labs/flux-schnell` | FLUX | fast |
-| `black-forest-labs/flux-1.1-pro` | FLUX | best quality |
-| `gpt-image-1`, `gpt-image-2` | OpenAI GPT-Image | returns data-URL PNGs |
-| `stabilityai/stable-diffusion-3-medium` | Stability | |
-| `stabilityai/stable-diffusion-xl-base-1.0` | Stability (SDXL) | |
+Each row was re-run against the live API on **2026-09-08**, one call at a time (Puter rejects
+parallel calls with `Too many concurrent requests`, so a parallel sweep measures nothing):
+
+| Model | Provider | 2026-09-08 |
+|-------|----------|-----------|
+| `stabilityai/stable-diffusion-xl-base-1.0` | Stability (SDXL) | ✅ 2.4s, hosted URL |
+| `black-forest-labs/flux-1.1-pro` | FLUX | ✅ 3.5s, hosted URL |
+| `gpt-image-1` | OpenAI GPT-Image | ✅ 25.9s, data-URL PNG |
+| `gpt-image-2` | OpenAI GPT-Image | ✅ 33.9s, data-URL PNG |
+| `black-forest-labs/flux-schnell` | FLUX | ❌ **removed** — 3 of 3 attempts failed after ~62s with `Failed to extract image URL from Replicate response` |
+| `stabilityai/stable-diffusion-3-medium` | Stability | ❌ **removed** — hard 404, `Unable to access model` |
+
+`flux-schnell` was this page's default and worked on 2026-08-07 (~9s). It now burns a minute of
+spinner and returns an error, which is worse for a first-time visitor than not being offered at
+all — that is why it is out rather than demoted. Both removals get re-tested before they come back.
 
 ---
 
@@ -73,7 +84,7 @@ No build step, no env vars, no secrets — it's one file.
 
 ```js
 // Returns an <img>. GPT-Image returns a data: URL; FLUX/SD return hosted URLs.
-await puter.ai.txt2img({ prompt, model: 'black-forest-labs/flux-schnell', width: 1024, height: 1024 });
+await puter.ai.txt2img({ prompt, model: 'stabilityai/stable-diffusion-xl-base-1.0', width: 1024, height: 1024 });
 ```
 
 > The bare `txt2img(prompt, true)` form in some Puter docs is outdated (errors `Missing model`).
